@@ -7,14 +7,29 @@
     <link href="https://unpkg.com/@dearflip/pdfjs-flipbook@1.0.12/dflip/css/dflip.min.css" rel="stylesheet">
     <link href="https://unpkg.com/@dearflip/pdfjs-flipbook@1.0.12/dflip/css/themify-icons.min.css" rel="stylesheet">
     <style>
-        /* Background ko dark kiya hai taaki theme se match kare */
-        body, html { margin: 0; padding: 0; height: 100%; background-color: #1a1a1a; }
+        body, html { margin: 0; padding: 0; height: 100%; background-color: #1a1a1a; overflow: hidden; }
+        /* Book ko screen par pura fit karne ke liye */
+        #my_book { height: 100vh; width: 100vw; }
     </style>
 </head>
 <body>
-    <div class="_df_book" webgl="true" source="science-notes.pdf" id="df_manual_book"></div>
+    
+    <div id="my_book"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://unpkg.com/@dearflip/pdfjs-flipbook@1.0.12/dflip/js/dflip.min.js"></script>
+    
+    <script>
+        // Yahan humne direct CDN link laga diya hai
+        $(document).ready(function () {
+            var pdfLink = "https://cdn.jsdelivr.net/gh/parikshasarathi/pdf-notes/science-notes.pdf";
+            
+            $("#my_book").flipBook(pdfLink, {
+                webgl: true,
+                height: "100%",
+                backgroundColor: "#1a1a1a"
+            });
+        });
+    </script>
 </body>
 </html>
