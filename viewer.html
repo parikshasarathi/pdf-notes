@@ -4,23 +4,45 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pariksha Sarathi Notes</title>
-    <link href="https://cdn.jsdelivr.net/npm/@dearflip/pdfjs-flipbook@1.0.12/dflip/css/dflip.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/@dearflip/pdfjs-flipbook@1.0.12/dflip/css/themify-icons.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/@dearflip/pdfjs-flipbook@1.0.12/dflip/css/dflip.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/@dearflip/pdfjs-flipbook@1.0.12/dflip/css/themify-icons.min.css" rel="stylesheet">
     <style>
-        body, html { margin: 0; padding: 0; height: 100%; background-color: #1a1a1a; overflow: hidden; }
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: #1a1a1a; }
     </style>
 </head>
 <body>
     
-    <div class="_df_book" source="science-notes.pdf" id="df_manual_book"></div>
+    <div id="pariksha_book" style="height: 100vh; width: 100vw;"></div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>var dFlipLocation = "https://unpkg.com/@dearflip/pdfjs-flipbook@1.0.12/dflip/";</script>
+    <script src="https://unpkg.com/@dearflip/pdfjs-flipbook@1.0.12/dflip/js/dflip.min.js"></script>
     
     <script>
-        var dFlipLocation = "https://cdn.jsdelivr.net/npm/@dearflip/pdfjs-flipbook@1.0.12/dflip/";
-    </script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/@dearflip/pdfjs-flipbook@1.0.12/dflip/js/dflip.min.js"></script>
+        $(document).ready(function () {
+            var myImages = [
+                "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMkJKOvZph4qGN5v7Qhjgl3-9AKmIowoJ17v08e2Y17iUmXAVONNeIQmo-s-ith8MsRtlaJP3hKnI5oicPYXfE8G2crXtYDoF9hKmrVsE-o_XjSx7Ky_kQyDAvDuvxNjh6zFQhpRTMgr31gDg-5CBL0bVVntDXo6dJoY85lQOPA68Yx0RgIKwKR8p8DPY/s5734/science-notes_page-0001.jpg",
+                "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjYRJ50Dz7BJTkZ3tqVNIAcdDCUQJguFABVeNvGWgsgwHZJRmGppO-wSwVm-wUZebIkI193nsped1tPbh1BaZ6aY0tETidZqv2MEGXlZvQoe3qYJkvS6-ChqNJsAB33juV2P8KDpFGqQmAVtCFhaF5Zm-vmZ4hUFdm1r7fN_iT7Zmr6RJWAL1WLgTJy2BM/s5734/science-notes_page-0002.jpg",
+                "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgrhD9pdAkvm-zNv8uiPdr6dbWNBZdgo2OLB_CdlOdfiJ_I-oNDSnOFTX7xvVtQhgkttvpTJ7eijxAoeU42pg_ZC-0_9o4izsxdXl1xw1e4T7EQHu2qmRKKA-sBExpnF_lMXdpNh2AqR6tWUhqXAYQH6L-gd4bblLjCzJhZhvQCpkGeKBFf68NsIACvqdg/s5734/science-notes_page-0003.jpg",
+                "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEidAxfUUFbNrN_5H5Svz5su8KYqG_NFllQGLpt09UcXDiB5ejj2C4wUo5PkOcOasNBoxa1qQZXiJjC_P6sAu1hIRBnr4gr-WhwR1EswHzbJzW2XcaAba7GBtABB1V2mni8Gb0pAXxZm7aomTI_M45oyI7VoKUPLuaiIdNiz_HNA0kpFd70NnXfpA0USWx8/s5734/science-notes_page-0004.jpg",
+                "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj6KXmUsqoEpFDtd6JKPDiGdXCHG4vuc318Mz-4xxrkG5XLPifUnQP7wYmCXgib3iO2_-eGs175WDn1sLVmDuaYvU7_v3ggDrs35nXyZjmrcD0jsRC9H74JPza82LmWwqZM-JuqlZn_yhu_opavzFoMUjWQBJIRYouGLXYiy3ih4ItTxXdTfXifIE7qMKc/s5734/science-notes_page-0005.jpg",
+                "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi9pYlbxfI9lVJLGUeUfgZgHJ9HPpj-D3ElwQ7hoMZRKcD-GIwG1DLQ_dyPCmPhWiZWmGLQC8aHY5J9wTWVSizplEfXDrmcjUy9xMTTWD9ZWIdepHV4TyS7PzsCQAoqYD5at1nAJtdjLJRLCzzIGypfZNuLvtnTW4Uk7fV-5DF7Kj3Yt8OXUmZOBmwhud0/s5734/science-notes_page-0006.jpg",
+                "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgDq8uDxaiYad1KnpIwQCl3Ph4FinopSVkFXW5C1eTmLTcpAIcYSoExvPKU4itocMKM4pXlhPFLsrBkTjS_pMKIGd-4oO95_oNzJ3n52qNDwZn28uJ9GwdL7gwo06DZnJ5TbhGzq_crTS8Ml9VOtg0dJ6-21i0nYEAxLQmlK7Ou9zUiOUUcQqTK25UDHnY/s5734/science-notes_page-0007.jpg",
+                "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj1csK5DkI_mLPa8xPoo-JngKPDnTCJKcfWUmNF8bIu8CO38EVp5ppgmcpp6uZaqdkc-KSw56GbdLcKztRui3HnyLf7wwlw5tdfLLyXBKpZDrIaRxoIMvI8-J-0y2t0CykdnqoGYPzOD4RQkqEdcdtSbRWPw0D54_XDPlSqFHZ9m2BThMuAzCQVqE1PHk4/s5734/science-notes_page-0008.jpg",
+                "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhv9a7cSSsM11_XjROFpSZPCGMTo6AdnoTEm5X6cJtEonkScTbBpFSirvMvmSZB7zOYk9PojZfupyAFYVkjfhhgmzy4ZI10etPL1lbfw0TNrd_ITINBWBJLQ9zg5iLhkOB3Ne_vsFiCtds96TxZAU0nGDoI4_OjSsQMrb75ZfaZFET1R_gvHZVlD8yxZqY/s5734/science-notes_page-0009.jpg",
+                "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEisqj9_o7NvBljsrQTMOJNQzL-Ua6WuagysWFL85uCTN2LhH42CWnaooJ6BTdGjMC1zD-mVFU0nR5iHa4KjtMBRpTR35jeHD8VaWgrWMbx1Ihy-6xmBAFNfi88WuSvFQh0NlRwvVO2FPszDvXemtnPhEmvE0KYb-GhtRuc_pECBCl1FZEk9DIqV0QacHHA/s5734/science-notes_page-0010.jpg",
+                "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgdvrNAqWg8BMl8KD3-XA_g7PaPiVVZiJENYtMa1_T_9xFE_eZHNopcGWSEDRe8WQ2ykshHlgT_jiOOFGDme-h7zBTiO2cbwdzQli6Fex9WR6ZiGYWwDeX6kbOIlSCt-I0LXXSi7iz2b5oQgHIQd4UTmJnDgbtWin90NQy2N3KE4MFxbGWzDfxufLvNlXY/s5734/science-notes_page-0011.jpg",
+                "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhnGkcwHo0IdlzQFOzG_OnjzDixBZVb0gD1CK-lZ9IRxjoszy9Nx9eNPbnlpqGGd0YfFE6kqdz3Iv0H_HE2GOPV2FDUdbnwiz2tf5VhlxixzT__9qQTu8nRg19UhOcbZe00u6oTXBv51Bt1jx8pS494ojs91HjGkRVt79pLRHG2r4WHBxS5bky74W7NWWc/s5734/science-notes_page-0012.jpg",
+                "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEivSG9-1EpnApc67gxFME8qSvN7uyAsMlb7LRPfKmvIlgykC4kmtCJL-KAX2oR8DQgRWjhuptDsHNDH4xYWTqjGLF-fHkGnfLlTb3DhR3eG21mO7iNHNa4JGm5SG__YWGDcyewVmZBmmwM_n6vnk_4LzgjoJoPYQiI7UL4nQNfmmaViLusbzX5zZTUAbYk/s5734/science-notes_page-0013.jpg",
+                "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhu2ORqapGIN2rnWepGvq5zLC0vODcwhB0oM8BqwspErsWzHr2aQzN0oLXdq4TFX38DZ_B85KSUllt8yUDxm4qJ4KTU6NWleIhtFHGK178TgZWDuzAqxYHCLySUgBspM8lKCC9zKXASrHYXwfx5MJlXj4Ua4zpZZGbw5kxX9E4C1Ejd7b5WXH4mIRSr34c/s5734/science-notes_page-0014.jpg",
+                "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRN8vkxgBfY9U1W8G-_Umta0C4nJwzD6qY-lWu-lqsQr1uBWxDQl56ZEqSr9m-QorpMSO-xoAIURnvWaW454_Ir8TbwN6XKbjqT7K3tLIBLSyd1yPvuA82rDL9AnXuQbgZ2Vm4yvkf5AH-E7HepX_WpChXpzCDD775eVKCtIg_hAitNyuYhCu4v-CQ_zo/s5734/science-notes_page-0015.jpg"
+            ];
 
+            $("#pariksha_book").flipBook(myImages, {
+                backgroundColor: "#1a1a1a",
+                webgl: false
+            });
+        });
+    </script>
 </body>
 </html>
