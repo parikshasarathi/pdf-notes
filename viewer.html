@@ -2,49 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AMC Food Safety Officer Notes</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
     <style>
-        /* VIBRATION FIX: overflow: hidden lagaya hai taaki scrollbar na hile */
-        html, body { margin: 0; padding: 0; width: 100vw; height: 100vh; background-color: transparent; user-select: none; -webkit-user-select: none; }
-        body { overflow: hidden; display: flex; justify-content: center; align-items: center; }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { margin: 0; padding: 0; width: 100%; height: 100%; background: transparent; overflow: hidden; font-family: sans-serif; }
+        
+        body { display: flex; justify-content: center; align-items: center; position: relative; }
 
-        #book-wrapper { width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; }
+        #book-container { width: 95%; height: 90%; display: flex; justify-content: center; align-items: center; transition: transform 0.3s ease; }
 
-        #flipbook { box-shadow: 0 0 20px rgba(0,0,0,0.2); transition: transform 0.3s ease; }
-        .page { background-color: white; cursor: pointer; }
-        .page img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+        #flipbook { box-shadow: 0 0 15px rgba(0,0,0,0.2); }
+        .page { background-color: white; }
+        .page img { width: 100%; height: 100%; object-fit: contain; }
 
-        /* Next/Prev Buttons - Thoda aur modern kiya hai */
+        /* Next/Prev Buttons - Touch Optimized */
         .nav-btn {
             position: fixed; top: 50%; transform: translateY(-50%);
-            font-size: 20px; color: #333; background: rgba(255, 255, 255, 0.8);
+            font-size: 24px; color: #fff; background: rgba(0, 0, 0, 0.4);
             border: none; border-radius: 50%; width: 45px; height: 45px;
-            cursor: pointer; z-index: 100; display: flex; justify-content: center; align-items: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1); backdrop-filter: blur(5px);
-            transition: background 0.2s;
+            cursor: pointer; z-index: 1000; display: flex; justify-content: center; align-items: center;
         }
-        #prev-btn { left: 15px; }
-        #next-btn { right: 15px; }
-        .nav-btn:hover { background: rgba(255, 255, 255, 1); }
+        #prev-btn { left: 5px; }
+        #next-btn { right: 5px; }
 
-        /* NAYA ZOOM DESIGN: Bottom Center Capsule */
+        /* Zoom Bar - App Style */
         .zoom-controls {
-            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
-            background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(10px);
-            border-radius: 30px; display: flex; gap: 5px; padding: 8px 15px;
-            z-index: 100; box-shadow: 0 4px 15px rgba(0,0,0,0.2); align-items: center;
+            position: fixed; top: 10px; right: 10px;
+            background: rgba(0, 0, 0, 0.75); border-radius: 20px;
+            display: flex; padding: 5px 12px; z-index: 1001; align-items: center;
         }
         .zoom-btn {
             background: transparent; border: none; color: white;
-            font-size: 22px; width: 35px; height: 35px; border-radius: 50%;
-            cursor: pointer; display: flex; justify-content: center; align-items: center;
-            transition: background 0.2s; font-weight: normal;
+            font-size: 20px; width: 30px; height: 30px; cursor: pointer;
         }
-        .zoom-btn:hover { background: rgba(255,255,255,0.2); }
-        #zoom-text { color: white; font-family: Arial, sans-serif; font-size: 14px; margin: 0 10px; font-weight: bold; width: 40px; text-align: center; }
+        #zoom-text { color: white; font-size: 12px; margin: 0 8px; min-width: 35px; text-align: center; }
     </style>
 </head>
 <body>
@@ -58,7 +52,7 @@
         <button id="zoom-in" class="zoom-btn">+</button>
     </div>
 
-    <div id="book-wrapper">
+    <div id="book-container">
         <div id="flipbook">
             <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMkJKOvZph4qGN5v7Qhjgl3-9AKmIowoJ17v08e2Y17iUmXAVONNeIQmo-s-ith8MsRtlaJP3hKnI5oicPYXfE8G2crXtYDoF9hKmrVsE-o_XjSx7Ky_kQyDAvDuvxNjh6zFQhpRTMgr31gDg-5CBL0bVVntDXo6dJoY85lQOPA68Yx0RgIKwKR8p8DPY/s5734/science-notes_page-0001.jpg" /></div>
             <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjYRJ50Dz7BJTkZ3tqVNIAcdDCUQJguFABVeNvGWgsgwHZJRmGppO-wSwVm-wUZebIkI193nsped1tPbh1BaZ6aY0tETidZqv2MEGXlZvQoe3qYJkvS6-ChqNJsAB33juV2P8KDpFGqQmAVtCFhaF5Zm-vmZ4hUFdm1r7fN_iT7Zmr6RJWAL1WLgTJy2BM/s5734/science-notes_page-0002.jpg" /></div>
@@ -80,78 +74,42 @@
 
     <script>
         $(window).on('load', function() {
-            var w = $(window).width();
-            var h = $(window).height();
-            var isMobile = w < 600;
+            var winW = $(window).width();
+            var winH = $(window).height();
+            var isMobile = winW < 600;
+
+            // Smart Resize
+            var bookW = isMobile ? winW - 20 : 800;
+            var bookH = isMobile ? (winH * 0.7) : 500;
 
             var book = $("#flipbook");
             book.turn({
-                width: isMobile ? w - 60 : 800,
-                height: isMobile ? h - 40 : 500,
+                width: bookW,
+                height: bookH,
                 display: isMobile ? 'single' : 'double', 
                 autoCenter: true,
-                elevation: 50,
-                gradients: true,
-                acceleration: true, 
-                duration: 1200      
+                duration: 1000
             });
 
-            // Nav Buttons
+            // Navigation
             $("#next-btn").click(function() { book.turn("next"); });
             $("#prev-btn").click(function() { book.turn("previous"); });
 
-            // Smart Zoom Logic (Scrollbar control)
+            // Zoom
             var currentZoom = 1;
-            
             function updateZoom() {
-                book.css({
-                    "transform": "scale(" + currentZoom + ")",
-                    "transform-origin": currentZoom > 1 ? "top left" : "center center"
-                });
+                $("#book-container").css("transform", "scale(" + currentZoom + ")");
                 $("#zoom-text").text(Math.round(currentZoom * 100) + "%");
-
-                // Jab zoom ho tabhi scrollbar aaye, warna chhupa rahe (Vibration fix)
                 if(currentZoom > 1) {
-                    $("body").css({"overflow": "auto", "align-items": "flex-start", "justify-content": "flex-start"});
-                    $("#book-wrapper").css({"padding": "30px"});
+                    $("body").css("overflow", "auto");
                 } else {
-                    $("body").css({"overflow": "hidden", "align-items": "center", "justify-content": "center"});
-                    $("#book-wrapper").css({"padding": "0"});
-                    window.scrollTo(0, 0); // Wapas center me laane ke liye
+                    $("body").css("overflow", "hidden");
                 }
             }
 
-            $("#zoom-in").click(function() {
-                currentZoom += 0.5;
-                updateZoom();
-            });
-
-            $("#zoom-out").click(function() {
-                if (currentZoom > 1) {
-                    currentZoom -= 0.5;
-                    updateZoom();
-                }
-            });
-
-            // Tap to turn
-            book.on("click", function(e) {
-                if(currentZoom > 1) return; // Zoom par page na palte
-                var bookOffset = $(this).offset();
-                var clickPosition = e.pageX - bookOffset.left;
-                if (clickPosition > $(this).width() / 2) {
-                    book.turn("next");
-                } else {
-                    book.turn("previous");
-                }
-            });
-
-            // Keyboard
-            $(document).keydown(function(e){
-                if (e.keyCode == 37) { book.turn("previous"); }
-                else if (e.keyCode == 39) { book.turn("next"); }
-            });
+            $("#zoom-in").click(function() { currentZoom += 0.2; updateZoom(); });
+            $("#zoom-out").click(function() { if (currentZoom > 1) { currentZoom -= 0.2; updateZoom(); } });
         });
     </script>
-
 </body>
 </html>
