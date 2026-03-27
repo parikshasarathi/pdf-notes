@@ -7,13 +7,28 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
     <style>
-        body { background-color: #f4f4f4; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; }
+        body { background-color: #f4f4f4; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; user-select: none; }
         #flipbook { box-shadow: 0 0 15px rgba(0,0,0,0.3); }
-        .page { background-color: white; }
+        .page { background-color: white; cursor: pointer; }
         .page img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
+        
+        /* Naye Buttons ka Design */
+        .nav-btn { 
+            position: absolute; top: 50%; transform: translateY(-50%); 
+            font-size: 24px; color: black; background: white; 
+            border: 2px solid #ccc; border-radius: 50%; width: 40px; height: 40px; 
+            cursor: pointer; z-index: 100; display: flex; justify-content: center; align-items: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        #prev-btn { left: 10px; }
+        #next-btn { right: 10px; }
+        .nav-btn:hover { background: #e0e0e0; }
     </style>
 </head>
 <body>
+
+    <button id="prev-btn" class="nav-btn">❮</button>
+    <button id="next-btn" class="nav-btn">❯</button>
 
     <div id="flipbook">
         <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMkJKOvZph4qGN5v7Qhjgl3-9AKmIowoJ17v08e2Y17iUmXAVONNeIQmo-s-ith8MsRtlaJP3hKnI5oicPYXfE8G2crXtYDoF9hKmrVsE-o_XjSx7Ky_kQyDAvDuvxNjh6zFQhpRTMgr31gDg-5CBL0bVVntDXo6dJoY85lQOPA68Yx0RgIKwKR8p8DPY/s5734/science-notes_page-0001.jpg" /></div>
@@ -39,14 +54,46 @@
             var h = $(window).height();
             var isMobile = w < 600;
 
-            // Desktop pe 2 page, Mobile pe 1 page
-            $("#flipbook").turn({
-                width: isMobile ? w - 20 : 800,
+            // 1. Book Setup
+            var book = $("#flipbook");
+            book.turn({
+                width: isMobile ? w - 60 : 800, // Buttons ke liye jagah chhodi hai
                 height: isMobile ? h - 40 : 500,
                 display: isMobile ? 'single' : 'double', 
                 autoCenter: true,
                 elevation: 50,
                 gradients: true
+            });
+
+            // 2. Buttons se page palatna
+            $("#next-btn").click(function() {
+                book.turn("next");
+            });
+            $("#prev-btn").click(function() {
+                book.turn("previous");
+            });
+
+            // 3. Image par Tap karke page palatna (Sabse aasan tarika)
+            book.on("click", function(e) {
+                var bookOffset = $(this).offset();
+                var clickPosition = e.pageX - bookOffset.left;
+                
+                // Agar book ke right half me click kiya toh aage, left me kiya toh piche
+                if (clickPosition > $(this).width() / 2) {
+                    book.turn("next");
+                } else {
+                    book.turn("previous");
+                }
+            });
+
+            // 4. Keyboard ke arrows se page palatna (Desktop/Laptop ke liye)
+            $(document).keydown(function(e){
+                if (e.keyCode == 37) { // Left arrow
+                    book.turn("previous");
+                }
+                else if (e.keyCode == 39) { // Right arrow
+                    book.turn("next");
+                }
             });
         });
     </script>
