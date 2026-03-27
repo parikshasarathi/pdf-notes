@@ -7,14 +7,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
     <style>
-        body { background-color: #f4f4f4; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; overflow: hidden; user-select: none; }
-        #flipbook { box-shadow: 0 0 15px rgba(0,0,0,0.3); }
+        /* Body me thoda change kiya hai taaki zoom karne par page scroll ho sake */
+        body { background-color: #f4f4f4; margin: 0; padding: 0; height: 100vh; overflow: hidden; user-select: none; display: flex; align-items: center; justify-content: center; }
+        
+        #book-wrapper { width: 100%; height: 100%; overflow: auto; display: flex; align-items: center; justify-content: center; }
+        
+        #flipbook { box-shadow: 0 0 15px rgba(0,0,0,0.3); transition: transform 0.3s ease; } /* Transition for smooth zoom */
         .page { background-color: white; cursor: pointer; }
         .page img { width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
         
-        /* Naye Buttons ka Design */
+        /* Next/Prev Buttons */
         .nav-btn { 
-            position: absolute; top: 50%; transform: translateY(-50%); 
+            position: fixed; top: 50%; transform: translateY(-50%); 
             font-size: 24px; color: black; background: white; 
             border: 2px solid #ccc; border-radius: 50%; width: 40px; height: 40px; 
             cursor: pointer; z-index: 100; display: flex; justify-content: center; align-items: center;
@@ -23,29 +27,46 @@
         #prev-btn { left: 10px; }
         #next-btn { right: 10px; }
         .nav-btn:hover { background: #e0e0e0; }
+
+        /* Naye Zoom Buttons ka Design */
+        .zoom-btn {
+            position: fixed; top: 15px; z-index: 100;
+            font-size: 20px; font-weight: bold; color: white; background: #2b50c7; 
+            border: none; border-radius: 5px; width: 40px; height: 40px; 
+            cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+            display: flex; justify-content: center; align-items: center;
+        }
+        #zoom-in { right: 65px; }
+        #zoom-out { right: 15px; }
+        .zoom-btn:hover { background: #1a368f; }
     </style>
 </head>
 <body>
 
+    <button id="zoom-in" class="zoom-btn">➕</button>
+    <button id="zoom-out" class="zoom-btn">➖</button>
+
     <button id="prev-btn" class="nav-btn">❮</button>
     <button id="next-btn" class="nav-btn">❯</button>
 
-    <div id="flipbook">
-        <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMkJKOvZph4qGN5v7Qhjgl3-9AKmIowoJ17v08e2Y17iUmXAVONNeIQmo-s-ith8MsRtlaJP3hKnI5oicPYXfE8G2crXtYDoF9hKmrVsE-o_XjSx7Ky_kQyDAvDuvxNjh6zFQhpRTMgr31gDg-5CBL0bVVntDXo6dJoY85lQOPA68Yx0RgIKwKR8p8DPY/s5734/science-notes_page-0001.jpg" /></div>
-        <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjYRJ50Dz7BJTkZ3tqVNIAcdDCUQJguFABVeNvGWgsgwHZJRmGppO-wSwVm-wUZebIkI193nsped1tPbh1BaZ6aY0tETidZqv2MEGXlZvQoe3qYJkvS6-ChqNJsAB33juV2P8KDpFGqQmAVtCFhaF5Zm-vmZ4hUFdm1r7fN_iT7Zmr6RJWAL1WLgTJy2BM/s5734/science-notes_page-0002.jpg" /></div>
-        <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgrhD9pdAkvm-zNv8uiPdr6dbWNBZdgo2OLB_CdlOdfiJ_I-oNDSnOFTX7xvVtQhgkttvpTJ7eijxAoeU42pg_ZC-0_9o4izsxdXl1xw1e4T7EQHu2qmRKKA-sBExpnF_lMXdpNh2AqR6tWUhqXAYQH6L-gd4bblLjCzJhZhvQCpkGeKBFf68NsIACvqdg/s5734/science-notes_page-0003.jpg" /></div>
-        <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEidAxfUUFbNrN_5H5Svz5su8KYqG_NFllQGLpt09UcXDiB5ejj2C4wUo5PkOcOasNBoxa1qQZXiJjC_P6sAu1hIRBnr4gr-WhwR1EswHzbJzW2XcaAba7GBtABB1V2mni8Gb0pAXxZm7aomTI_M45oyI7VoKUPLuaiIdNiz_HNA0kpFd70NnXfpA0USWx8/s5734/science-notes_page-0004.jpg" /></div>
-        <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj6KXmUsqoEpFDtd6JKPDiGdXCHG4vuc318Mz-4xxrkG5XLPifUnQP7wYmCXgib3iO2_-eGs175WDn1sLVmDuaYvU7_v3ggDrs35nXyZjmrcD0jsRC9H74JPza82LmWwqZM-JuqlZn_yhu_opavzFoMUjWQBJIRYouGLXYiy3ih4ItTxXdTfXifIE7qMKc/s5734/science-notes_page-0005.jpg" /></div>
-        <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi9pYlbxfI9lVJLGUeUfgZgHJ9HPpj-D3ElwQ7hoMZRKcD-GIwG1DLQ_dyPCmPhWiZWmGLQC8aHY5J9wTWVSizplEfXDrmcjUy9xMTTWD9ZWIdepHV4TyS7PzsCQAoqYD5at1nAJtdjLJRLCzzIGypfZNuLvtnTW4Uk7fV-5DF7Kj3Yt8OXUmZOBmwhud0/s5734/science-notes_page-0006.jpg" /></div>
-        <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgDq8uDxaiYad1KnpIwQCl3Ph4FinopSVkFXW5C1eTmLTcpAIcYSoExvPKU4itocMKM4pXlhPFLsrBkTjS_pMKIGd-4oO95_oNzJ3n52qNDwZn28uJ9GwdL7gwo06DZnJ5TbhGzq_crTS8Ml9VOtg0dJ6-21i0nYEAxLQmlK7Ou9zUiOUUcQqTK25UDHnY/s5734/science-notes_page-0007.jpg" /></div>
-        <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj1csK5DkI_mLPa8xPoo-JngKPDnTCJKcfWUmNF8bIu8CO38EVp5ppgmcpp6uZaqdkc-KSw56GbdLcKztRui3HnyLf7wwlw5tdfLLyXBKpZDrIaRxoIMvI8-J-0y2t0CykdnqoGYPzOD4RQkqEdcdtSbRWPw0D54_XDPlSqFHZ9m2BThMuAzCQVqE1PHk4/s5734/science-notes_page-0008.jpg" /></div>
-        <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhv9a7cSSsM11_XjROFpSZPCGMTo6AdnoTEm5X6cJtEonkScTbBpFSirvMvmSZB7zOYk9PojZfupyAFYVkjfhhgmzy4ZI10etPL1lbfw0TNrd_ITINBWBJLQ9zg5iLhkOB3Ne_vsFiCtds96TxZAU0nGDoI4_OjSsQMrb75ZfaZFET1R_gvHZVlD8yxZqY/s5734/science-notes_page-0009.jpg" /></div>
-        <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEisqj9_o7NvBljsrQTMOJNQzL-Ua6WuagysWFL85uCTN2LhH42CWnaooJ6BTdGjMC1zD-mVFU0nR5iHa4KjtMBRpTR35jeHD8VaWgrWMbx1Ihy-6xmBAFNfi88WuSvFQh0NlRwvVO2FPszDvXemtnPhEmvE0KYb-GhtRuc_pECBCl1FZEk9DIqV0QacHHA/s5734/science-notes_page-0010.jpg" /></div>
-        <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgdvrNAqWg8BMl8KD3-XA_g7PaPiVVZiJENYtMa1_T_9xFE_eZHNopcGWSEDRe8WQ2ykshHlgT_jiOOFGDme-h7zBTiO2cbwdzQli6Fex9WR6ZiGYWwDeX6kbOIlSCt-I0LXXSi7iz2b5oQgHIQd4UTmJnDgbtWin90NQy2N3KE4MFxbGWzDfxufLvNlXY/s5734/science-notes_page-0011.jpg" /></div>
-        <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhnGkcwHo0IdlzQFOzG_OnjzDixBZVb0gD1CK-lZ9IRxjoszy9Nx9eNPbnlpqGGd0YfFE6kqdz3Iv0H_HE2GOPV2FDUdbnwiz2tf5VhlxixzT__9qQTu8nRg19UhOcbZe00u6oTXBv51Bt1jx8pS494ojs91HjGkRVt79pLRHG2r4WHBxS5bky74W7NWWc/s5734/science-notes_page-0012.jpg" /></div>
-        <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEivSG9-1EpnApc67gxFME8qSvN7uyAsMlb7LRPfKmvIlgykC4kmtCJL-KAX2oR8DQgRWjhuptDsHNDH4xYWTqjGLF-fHkGnfLlTb3DhR3eG21mO7iNHNa4JGm5SG__YWGDcyewVmZBmmwM_n6vnk_4LzgjoJoPYQiI7UL4nQNfmmaViLusbzX5zZTUAbYk/s5734/science-notes_page-0013.jpg" /></div>
-        <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhu2ORqapGIN2rnWepGvq5zLC0vODcwhB0oM8BqwspErsWzHr2aQzN0oLXdq4TFX38DZ_B85KSUllt8yUDxm4qJ4KTU6NWleIhtFHGK178TgZWDuzAqxYHCLySUgBspM8lKCC9zKXASrHYXwfx5MJlXj4Ua4zpZZGbw5kxX9E4C1Ejd7b5WXH4mIRSr34c/s5734/science-notes_page-0014.jpg" /></div>
-        <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRN8vkxgBfY9U1W8G-_Umta0C4nJwzD6qY-lWu-lqsQr1uBWxDQl56ZEqSr9m-QorpMSO-xoAIURnvWaW454_Ir8TbwN6XKbjqT7K3tLIBLSyd1yPvuA82rDL9AnXuQbgZ2Vm4yvkf5AH-E7HepX_WpChXpzCDD775eVKCtIg_hAitNyuYhCu4v-CQ_zo/s5734/science-notes_page-0015.jpg" /></div>
+    <div id="book-wrapper">
+        <div id="flipbook">
+            <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjMkJKOvZph4qGN5v7Qhjgl3-9AKmIowoJ17v08e2Y17iUmXAVONNeIQmo-s-ith8MsRtlaJP3hKnI5oicPYXfE8G2crXtYDoF9hKmrVsE-o_XjSx7Ky_kQyDAvDuvxNjh6zFQhpRTMgr31gDg-5CBL0bVVntDXo6dJoY85lQOPA68Yx0RgIKwKR8p8DPY/s5734/science-notes_page-0001.jpg" /></div>
+            <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjYRJ50Dz7BJTkZ3tqVNIAcdDCUQJguFABVeNvGWgsgwHZJRmGppO-wSwVm-wUZebIkI193nsped1tPbh1BaZ6aY0tETidZqv2MEGXlZvQoe3qYJkvS6-ChqNJsAB33juV2P8KDpFGqQmAVtCFhaF5Zm-vmZ4hUFdm1r7fN_iT7Zmr6RJWAL1WLgTJy2BM/s5734/science-notes_page-0002.jpg" /></div>
+            <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgrhD9pdAkvm-zNv8uiPdr6dbWNBZdgo2OLB_CdlOdfiJ_I-oNDSnOFTX7xvVtQhgkttvpTJ7eijxAoeU42pg_ZC-0_9o4izsxdXl1xw1e4T7EQHu2qmRKKA-sBExpnF_lMXdpNh2AqR6tWUhqXAYQH6L-gd4bblLjCzJhZhvQCpkGeKBFf68NsIACvqdg/s5734/science-notes_page-0003.jpg" /></div>
+            <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEidAxfUUFbNrN_5H5Svz5su8KYqG_NFllQGLpt09UcXDiB5ejj2C4wUo5PkOcOasNBoxa1qQZXiJjC_P6sAu1hIRBnr4gr-WhwR1EswHzbJzW2XcaAba7GBtABB1V2mni8Gb0pAXxZm7aomTI_M45oyI7VoKUPLuaiIdNiz_HNA0kpFd70NnXfpA0USWx8/s5734/science-notes_page-0004.jpg" /></div>
+            <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj6KXmUsqoEpFDtd6JKPDiGdXCHG4vuc318Mz-4xxrkG5XLPifUnQP7wYmCXgib3iO2_-eGs175WDn1sLVmDuaYvU7_v3ggDrs35nXyZjmrcD0jsRC9H74JPza82LmWwqZM-JuqlZn_yhu_opavzFoMUjWQBJIRYouGLXYiy3ih4ItTxXdTfXifIE7qMKc/s5734/science-notes_page-0005.jpg" /></div>
+            <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi9pYlbxfI9lVJLGUeUfgZgHJ9HPpj-D3ElwQ7hoMZRKcD-GIwG1DLQ_dyPCmPhWiZWmGLQC8aHY5J9wTWVSizplEfXDrmcjUy9xMTTWD9ZWIdepHV4TyS7PzsCQAoqYD5at1nAJtdjLJRLCzzIGypfZNuLvtnTW4Uk7fV-5DF7Kj3Yt8OXUmZOBmwhud0/s5734/science-notes_page-0006.jpg" /></div>
+            <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgDq8uDxaiYad1KnpIwQCl3Ph4FinopSVkFXW5C1eTmLTcpAIcYSoExvPKU4itocMKM4pXlhPFLsrBkTjS_pMKIGd-4oO95_oNzJ3n52qNDwZn28uJ9GwdL7gwo06DZnJ5TbhGzq_crTS8Ml9VOtg0dJ6-21i0nYEAxLQmlK7Ou9zUiOUUcQqTK25UDHnY/s5734/science-notes_page-0007.jpg" /></div>
+            <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEj1csK5DkI_mLPa8xPoo-JngKPDnTCJKcfWUmNF8bIu8CO38EVp5ppgmcpp6uZaqdkc-KSw56GbdLcKztRui3HnyLf7wwlw5tdfLLyXBKpZDrIaRxoIMvI8-J-0y2t0CykdnqoGYPzOD4RQkqEdcdtSbRWPw0D54_XDPlSqFHZ9m2BThMuAzCQVqE1PHk4/s5734/science-notes_page-0008.jpg" /></div>
+            <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhv9a7cSSsM11_XjROFpSZPCGMTo6AdnoTEm5X6cJtEonkScTbBpFSirvMvmSZB7zOYk9PojZfupyAFYVkjfhhgmzy4ZI10etPL1lbfw0TNrd_ITINBWBJLQ9zg5iLhkOB3Ne_vsFiCtds96TxZAU0nGDoI4_OjSsQMrb75ZfaZFET1R_gvHZVlD8yxZqY/s5734/science-notes_page-0009.jpg" /></div>
+            <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEisqj9_o7NvBljsrQTMOJNQzL-Ua6WuagysWFL85uCTN2LhH42CWnaooJ6BTdGjMC1zD-mVFU0nR5iHa4KjtMBRpTR35jeHD8VaWgrWMbx1Ihy-6xmBAFNfi88WuSvFQh0NlRwvVO2FPszDvXemtnPhEmvE0KYb-GhtRuc_pECBCl1FZEk9DIqV0QacHHA/s5734/science-notes_page-0010.jpg" /></div>
+            <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgdvrNAqWg8BMl8KD3-XA_g7PaPiVVZiJENYtMa1_T_9xFE_eZHNopcGWSEDRe8WQ2ykshHlgT_jiOOFGDme-h7zBTiO2cbwdzQli6Fex9WR6ZiGYWwDeX6kbOIlSCt-I0LXXSi7iz2b5oQgHIQd4UTmJnDgbtWin90NQy2N3KE4MFxbGWzDfxufLvNlXY/s5734/science-notes_page-0011.jpg" /></div>
+            <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhnGkcwHo0IdlzQFOzG_OnjzDixBZVb0gD1CK-lZ9IRxjoszy9Nx9eNPbnlpqGGd0YfFE6kqdz3Iv0H_HE2GOPV2FDUdbnwiz2tf5VhlxixzT__9qQTu8nRg19UhOcbZe00u6oTXBv51Bt1jx8pS494ojs91HjGkRVt79pLRHG2r4WHBxS5bky74W7NWWc/s5734/science-notes_page-0012.jpg" /></div>
+            <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEivSG9-1EpnApc67gxFME8qSvN7uyAsMlb7LRPfKmvIlgykC4kmtCJL-KAX2oR8DQgRWjhuptDsHNDH4xYWTqjGLF-fHkGnfLlTb3DhR3eG21mO7iNHNa4JGm5SG__YWGDcyewVmZBmmwM_n6vnk_4LzgjoJoPYQiI7UL4nQNfmmaViLusbzX5zZTUAbYk/s5734/science-notes_page-0013.jpg" /></div>
+            <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhu2ORqapGIN2rnWepGvq5zLC0vODcwhB0oM8BqwspErsWzHr2aQzN0oLXdq4TFX38DZ_B85KSUllt8yUDxm4qJ4KTU6NWleIhtFHGK178TgZWDuzAqxYHCLySUgBspM8lKCC9zKXASrHYXwfx5MJlXj4Ua4zpZZGbw5kxX9E4C1Ejd7b5WXH4mIRSr34c/s5734/science-notes_page-0014.jpg" /></div>
+            <div class="page"><img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgRN8vkxgBfY9U1W8G-_Umta0C4nJwzD6qY-lWu-lqsQr1uBWxDQl56ZEqSr9m-QorpMSO-xoAIURnvWaW454_Ir8TbwN6XKbjqT7K3tLIBLSyd1yPvuA82rDL9AnXuQbgZ2Vm4yvkf5AH-E7HepX_WpChXpzCDD775eVKCtIg_hAitNyuYhCu4v-CQ_zo/s5734/science-notes_page-0015.jpg" /></div>
+        </div>
     </div>
 
     <script>
@@ -54,34 +75,57 @@
             var h = $(window).height();
             var isMobile = w < 600;
 
-            // 1. Book Setup (Smoothness Update)
+            // 1. Book Setup
             var book = $("#flipbook");
             book.turn({
-                width: isMobile ? w - 60 : 800, // Buttons ke liye jagah chhodi hai
+                width: isMobile ? w - 60 : 800, 
                 height: isMobile ? h - 40 : 500,
                 display: isMobile ? 'single' : 'double', 
                 autoCenter: true,
                 elevation: 50,
                 gradients: true,
-                // --- NAYE FEATURES YAHAN HAIN ---
-                acceleration: true, // GPU ko use karke animation smooth karega
-                duration: 1200      // Page palatne ka time (1.2 seconds) badha diya gaya hai
+                acceleration: true, 
+                duration: 1200      
             });
 
-            // 2. Buttons se page palatna
-            $("#next-btn").click(function() {
-                book.turn("next");
-            });
-            $("#prev-btn").click(function() {
-                book.turn("previous");
+            // 2. Nav Buttons Logic
+            $("#next-btn").click(function() { book.turn("next"); });
+            $("#prev-btn").click(function() { book.turn("previous"); });
+
+            // 3. Zoom Logic (Naya Feature)
+            var currentZoom = 1;
+            
+            $("#zoom-in").click(function() {
+                currentZoom += 0.5; // Zoom badao
+                book.css({
+                    "transform": "scale(" + currentZoom + ")",
+                    "transform-origin": "top center"
+                });
+                $("body").css("align-items", "flex-start"); // Upar se scroll ho sake
             });
 
-            // 3. Image par Tap karke page palatna
+            $("#zoom-out").click(function() {
+                if (currentZoom > 1) {
+                    currentZoom -= 0.5; // Zoom kam karo
+                    book.css({
+                        "transform": "scale(" + currentZoom + ")",
+                        "transform-origin": "top center"
+                    });
+                    
+                    if (currentZoom === 1) {
+                        $("body").css("align-items", "center"); // Wapas center me lao
+                    }
+                }
+            });
+
+            // 4. Tap karke page palatna
             book.on("click", function(e) {
+                // Agar zoom in hai, toh click par page palatne se rokein taaki aaram se scroll ho sake
+                if(currentZoom > 1) return; 
+
                 var bookOffset = $(this).offset();
                 var clickPosition = e.pageX - bookOffset.left;
                 
-                // Agar book ke right half me click kiya toh aage, left me kiya toh piche
                 if (clickPosition > $(this).width() / 2) {
                     book.turn("next");
                 } else {
@@ -89,14 +133,10 @@
                 }
             });
 
-            // 4. Keyboard ke arrows se page palatna (Desktop/Laptop ke liye)
+            // 5. Keyboard Navigation
             $(document).keydown(function(e){
-                if (e.keyCode == 37) { // Left arrow
-                    book.turn("previous");
-                }
-                else if (e.keyCode == 39) { // Right arrow
-                    book.turn("next");
-                }
+                if (e.keyCode == 37) { book.turn("previous"); }
+                else if (e.keyCode == 39) { book.turn("next"); }
             });
         });
     </script>
