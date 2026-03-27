@@ -54,7 +54,7 @@
             var h = $(window).height();
             var isMobile = w < 600;
 
-            // 1. Book Setup
+            // 1. Book Setup (Smoothness Update)
             var book = $("#flipbook");
             book.turn({
                 width: isMobile ? w - 60 : 800, // Buttons ke liye jagah chhodi hai
@@ -62,7 +62,10 @@
                 display: isMobile ? 'single' : 'double', 
                 autoCenter: true,
                 elevation: 50,
-                gradients: true
+                gradients: true,
+                // --- NAYE FEATURES YAHAN HAIN ---
+                acceleration: true, // GPU ko use karke animation smooth karega
+                duration: 1200      // Page palatne ka time (1.2 seconds) badha diya gaya hai
             });
 
             // 2. Buttons se page palatna
@@ -73,7 +76,7 @@
                 book.turn("previous");
             });
 
-            // 3. Image par Tap karke page palatna (Sabse aasan tarika)
+            // 3. Image par Tap karke page palatna
             book.on("click", function(e) {
                 var bookOffset = $(this).offset();
                 var clickPosition = e.pageX - bookOffset.left;
